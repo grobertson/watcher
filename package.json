@@ -1,0 +1,23 @@
+{
+  "name": "watcher",
+  "version": "1.0.0",
+  "description": "Watch an arbitrary list of files and trigger an action on change.",
+  "main": "watcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grobertson/watcher.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grobertson/watcher/issues"
+  },
+  "homepage": "https://github.com/grobertson/watcher#readme",
+  "dependencies": {
+    "log-timestamp": "^0.3.0"
+  }
+}
