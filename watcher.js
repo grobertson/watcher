@@ -2,20 +2,20 @@ const fs = require('fs');
 require('log-timestamp');
 
 const watchFile = '/tmp/';
+var lastCheck = new Date();
+console.log(`Watching for changes in ${watchFile}`);
 
-console.log(`Watching for file changes in ${watchFile}`);
-
-fs.watchFile(watchFile, {interval: 300},(curr, prev) => {
+fs.watchFile(watchFile, {interval: 5000},(curr, prev) => {
   // On detect change
   beginOnChange();
 });
 
 function beginOnChange(){
     console.log(`${watchFile} file Changed`);
-    getNewestFile(`${watchFile}`, fs.readdirSync(`${watchFile}`), logToFile)
+    getNewestFiles(`${watchFile}`, fs.readdirSync(`${watchFile}`), newFileHandler)
 }
 
-function getNewestFile(dir, files, callback) {
+function getNewestFiles(dir, files, callback) {
     if (!callback) return;
     if (!files || (files && files.length === 0)) {
         callback();
@@ -27,16 +27,19 @@ function getNewestFile(dir, files, callback) {
     var checked = 0;
     fs.stat(dir + newest.file, function(err, stats) {
         newest.mtime = stats.mtime;
+        var changedFiles = [];
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
             (function(file) {
                 fs.stat(file, function(err, stats) {
                     ++checked;
-                    if (stats.mtime.getTime() > newest.mtime.getTime()) {
+                    if (stats.mtime.getTime() > lastCheck.getTime()) {
                         newest = { file : file, mtime : stats.mtime };
+                        changedFiles.push(newest)
                     }
                     if (checked == files.length) {
-                        callback(newest);
+                        lastCheck = new Date(); // Update our clock
+                        callback(changedFiles);
                     }
                 });
             })(dir + file);
@@ -45,6 +48,14 @@ function getNewestFile(dir, files, callback) {
  }
 
 
- function logToFile(fn){
-     console.log("Filename was " + fn.valueOf().file + " Last modified at " + fn.valueOf().mtime);
+ function newFileHandler(fn){
+     if (fn.length == 0) {
+         console.log("File change detected but no new mtimes found. This should happen if a file is deleted.");
+         return
+     }
+     for (var i = 0; i < fn.length; i++) {
+        console.log("Filename was " + fn[i].valueOf().file + " Last modified at " + fn[i].valueOf().mtime);
+        //Use changed file list and inform pods of config change
+     }
+     return fn
  }
