@@ -12,16 +12,5 @@ A simple node daemon to watch an arbitrary file or directory of files, detect th
 
 # To Do / What's Missing?
 
-- Should read a config file with poll time, directory(ies) to monitor
-- Should gracefully handle an array of directories, such that n directories can be handled with 1 to 1 process to pod ratio
-- How will pod notifications work.
-- If notifications come from watcher, watcher will need to be able to identify the nodes in the cluster
-
-
-# Pod Notification Ideas
-
-- (Best) Completely integrate the watcher into application running in k8, let each container manage its own config reload on chnage detection, use symlinks to configmap. Something like: 1) Change symlink 2) fs change detected 3) re-initialize.
-- (Better) Add api endpoint to atlas which triggers a configuration reload without restart, Use "PostStart" and "PreStop" lifecycle hooks to maintain a list of active cluster nodes, make request to that endpoint from watcher.js
-- (Good) Call kube commands to manage cluster refresh
-
-
+- Could read a config file with poll time, directory(ies) to monitor
+- Could gracefully handle an array of directories, such that n directories can be handled with 1 to 1 process to pod ratio
